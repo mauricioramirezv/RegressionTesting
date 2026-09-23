@@ -1,2 +1,2 @@
-pytest
-pyhamcrest
+pytest>=8.3,<10
+PyHamcrest>=2.1,<3
