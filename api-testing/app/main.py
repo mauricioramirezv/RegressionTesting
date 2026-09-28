@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="API Testing Demo", version="1.0.0")
 
@@ -8,23 +8,28 @@ PRODUCTOS = {
     2: {"id": 2, "nombre": "Mouse", "precio": 80.0},
 }
 
+
 class ProductoIn(BaseModel):
-    nombre: str
-    precio: float
+    nombre: str = Field(min_length=1, max_length=100)
+    precio: float = Field(gt=0)
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+
 @app.get("/productos")
 def listar_productos():
     return list(PRODUCTOS.values())
+
 
 @app.get("/productos/{producto_id}")
 def obtener_producto(producto_id: int):
     if producto_id not in PRODUCTOS:
         raise HTTPException(status_code=404, detail="Producto no encontrado")
     return PRODUCTOS[producto_id]
+
 
 @app.post("/productos", status_code=201)
 def crear_producto(producto: ProductoIn):
