@@ -1,4 +1,6 @@
+from html import escape
 import re
+
 
 def validar_password_segura(password: str) -> bool:
     if len(password) < 8:
@@ -13,5 +15,7 @@ def validar_password_segura(password: str) -> bool:
         return False
     return True
 
+
 def sanitizar_entrada(texto: str) -> str:
-    return texto.replace("<", "").replace(">", "").strip()
+    """Escapa texto para mostrarlo en contenido HTML, no para otros contextos."""
+    return escape(texto.strip(), quote=True)

@@ -1,256 +1,109 @@
-# Pruebas de regresión con Python
+# Ejemplos de pruebas de regresión con Python
 
-Repositorio educativo para estudiar cómo una suite automatizada detecta cambios que alteran comportamientos previamente correctos. El módulo principal integra el patrón Triple AAA, los principios FIRST y aserciones expresivas con PyHamcrest.
+Repositorio educativo con cuatro módulos independientes para estudiar regresión
+funcional, pruebas de API, verificaciones básicas de rendimiento y validaciones
+de seguridad. Todos los ejemplos utilizan Pytest y están preparados para
+ejecutarse de forma aislada o mediante un único comando desde la raíz.
 
 ## Objetivos de aprendizaje
 
-Al finalizar la práctica, el estudiante podrá:
+Al finalizar las prácticas, el estudiante podrá:
 
-- Explicar qué es una regresión de software.
-- Organizar pruebas con Arrange, Act y Assert.
-- Evaluar pruebas mediante los principios FIRST.
-- Construir aserciones legibles y expresivas.
-- Ejecutar pruebas completas, por archivo e individuales.
-- Reproducir un defecto, detectarlo y evitar que reaparezca.
+- explicar qué es una regresión de software;
+- organizar pruebas con Arrange, Act y Assert;
+- evaluar pruebas mediante los principios FIRST;
+- comprobar contratos HTTP, códigos de estado y validaciones de entrada;
+- establecer una línea base educativa de rendimiento;
+- verificar reglas básicas de contraseñas y escape de texto para HTML;
+- ejecutar una suite completa, un módulo o una prueba individual.
 
 ## Módulos
 
-| Carpeta | Propósito |
-|---|---|
-| `regression-testing` | Regresión funcional, AAA, FIRST y PyHamcrest |
-| `api-testing` | Regresión de endpoints, códigos HTTP y respuestas JSON |
-| `performance-testing` | Detección básica de degradaciones de rendimiento |
-| `security-testing` | Regresión de reglas de validación |
+| Carpeta | Propósito | Suite esperada |
+|---|---|---:|
+| [`regression-testing`](regression-testing/README.md) | Regresión funcional, AAA, FIRST y PyHamcrest | 15 pruebas |
+| [`api-testing`](api-testing/README.md) | Contratos de endpoints, respuestas JSON y validación | 9 pruebas |
+| [`performance-testing`](performance-testing/README.md) | Línea base, presupuesto y comparación de rendimiento | 8 pruebas |
+| [`security-testing`](security-testing/README.md) | Reglas de contraseña y escape de contenido HTML | 9 pruebas |
 
 ## Requisitos
 
 - Python 3.10 o superior.
 - `pip`.
-- Visual Studio Code con la extensión **Python** (recomendado).
-- Git, si el proyecto se obtiene desde GitHub.
+- Git.
+- Visual Studio Code con la extensión **Python** (opcional).
 
-## Estructura del módulo principal
+## Inicio rápido: ejecutar todos los módulos
 
-```text
-regression-testing/
-├── app/
-│   ├── calculadora.py
-│   └── carrito.py
-├── tests/
-│   ├── test_regression.py
-│   └── test_carrito_aaa_first.py
-├── ejercicios/
-│   └── README.md
-├── pytest.ini
-└── requirements.txt
-```
-
-Los archivos de `app/` contienen el código que se prueba. Los archivos de `tests/` contienen las pruebas automatizadas. Las actividades para desarrollar durante la clase se encuentran en `ejercicios/README.md`.
-
-## Inicio rápido del módulo principal
-
-### Windows PowerShell
-
-Desde la carpeta raíz del repositorio, ejecute:
+En Windows PowerShell, desde la raíz del repositorio:
 
 ```powershell
-cd regression-testing
 py -m venv .venv
 & ".\.venv\Scripts\python.exe" -m pip install --upgrade pip
 & ".\.venv\Scripts\python.exe" -m pip install -r requirements.txt
-& ".\.venv\Scripts\python.exe" -m pytest -q
+& ".\.venv\Scripts\python.exe" run_all_tests.py
 ```
 
-La creación del entorno virtual y la instalación de dependencias solo se realizan la primera vez.
-
-En las siguientes sesiones, ingrese a `regression-testing` y ejecute directamente las pruebas:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest -q
-```
-
-### Linux o macOS
+En Linux o macOS:
 
 ```bash
-cd regression-testing
 python3 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
 ./.venv/bin/python -m pip install -r requirements.txt
-./.venv/bin/python -m pytest -q
+./.venv/bin/python run_all_tests.py
 ```
 
-## Ejecutar todas las pruebas
+El script ejecuta cada módulo en un proceso independiente. Esto es necesario
+porque todos contienen un paquete llamado `app`.
 
-En Windows PowerShell:
+> No ejecute `python -m pytest` directamente desde la raíz. Pytest intentaría
+> cargar simultáneamente los cuatro paquetes `app` y podría producir errores de
+> importación o importar el módulo incorrecto.
+
+## Ejecutar un solo módulo
+
+Ejemplo para pruebas de API en Windows:
 
 ```powershell
-& ".\.venv\Scripts\python.exe" -m pytest -v
+Set-Location api-testing
+& "..\.venv\Scripts\python.exe" -m pytest -v
 ```
 
-El resultado esperado es:
-
-```text
-15 passed
-```
-
-Para obtener una salida resumida:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest -q
-```
-
-## Consultar las pruebas disponibles
-
-Para listar todas las pruebas sin ejecutarlas:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest --collect-only -q
-```
-
-Pytest identifica cada prueba mediante la siguiente estructura:
-
-```text
-ruta_del_archivo.py::nombre_de_la_prueba
-```
-
-## Ejecutar las pruebas por archivo
-
-Ejecutar solamente las pruebas de la calculadora:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest tests/test_regression.py -v
-```
-
-Ejecutar solamente las pruebas del carrito:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest tests/test_carrito_aaa_first.py -v
-```
+Cambie `api-testing` por `regression-testing`, `performance-testing` o
+`security-testing` según la práctica que quiera ejecutar.
 
 ## Ejecutar una prueba individual
 
-Ejecutar solamente la prueba de suma:
+```powershell
+Set-Location regression-testing
+& "..\.venv\Scripts\python.exe" -m pytest `
+    "tests/test_regression.py::test_regresion_suma" -v
+```
+
+Para consultar todos los identificadores disponibles dentro de un módulo:
 
 ```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_regression.py::test_regresion_suma" -v
+& "..\.venv\Scripts\python.exe" -m pytest --collect-only -q
 ```
-
-Ejecutar solamente la prueba de resta:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_regression.py::test_regresion_resta" -v
-```
-
-Ejecutar solamente la prueba de multiplicación:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_regression.py::test_regresion_multiplicacion" -v
-```
-
-Ejecutar solamente la prueba de división:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_regression.py::test_regresion_division" -v
-```
-
-Ejecutar solamente la prueba de división por cero:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_regression.py::test_regresion_division_por_cero" -v
-```
-
-Ejecutar solamente la prueba del descuento del 10 %:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest "tests/test_carrito_aaa_first.py::test_total_con_descuento_del_diez_por_ciento" -v
-```
-
-También se pueden ejecutar todas las pruebas cuyo nombre contenga una palabra:
-
-```powershell
-& ".\.venv\Scripts\python.exe" -m pytest -k "descuento" -v
-```
-
-## Ejecutar una prueba desde Visual Studio Code
-
-1. Abra la carpeta raíz `RegressionTesting` en Visual Studio Code.
-2. Abra uno de los archivos ubicados en `regression-testing/tests`.
-3. Localice una función cuyo nombre comience por `test_`.
-4. Seleccione la opción **Run Test** que aparece encima de la función.
-5. Revise el resultado en el panel **Testing**.
-
-Si no aparece la opción **Run Test**:
-
-1. Abra el panel **Testing**.
-2. Seleccione **Configure Python Tests**.
-3. Elija `pytest`.
-4. Seleccione la carpeta `regression-testing/tests`.
-5. Configure como intérprete el Python del entorno `.venv`.
-
-## Patrón Triple AAA
-
-Las pruebas se organizan utilizando el patrón Triple AAA:
-
-- **Arrange:** preparar los datos y las condiciones necesarias.
-- **Act:** ejecutar la operación que se quiere probar.
-- **Assert:** verificar automáticamente el resultado obtenido.
-
-Ejemplo:
-
-```python
-def test_regresion_suma():
-    # Arrange
-    numero_uno = 10
-    numero_dos = 5
-
-    # Act
-    resultado = suma(numero_uno, numero_dos)
-
-    # Assert
-    assert_that(resultado, equal_to(15))
-```
-
-## Principios FIRST
-
-Las pruebas deben cumplir los siguientes principios:
-
-- **Fast:** deben ejecutarse rápidamente.
-- **Independent:** no deben depender de otras pruebas.
-- **Repeatable:** deben producir el mismo resultado en diferentes ejecuciones.
-- **Self-validating:** deben determinar automáticamente si pasan o fallan.
-- **Timely:** deben escribirse en el momento adecuado, preferiblemente junto con la funcionalidad.
-
-## Interpretación de los resultados
-
-- `PASSED`: el comportamiento cumple con el resultado esperado.
-- `FAILED`: una aserción no se cumplió.
-- `ERROR`: la prueba no pudo ejecutarse debido a un problema de configuración, importación o dependencias.
-
-Cuando una prueba falla, no debe modificarse inmediatamente para conseguir que pase. Primero se debe determinar si el problema se encuentra en el código de `app/`, en los datos de prueba o en el resultado esperado.
 
 ## Ruta sugerida para la clase
 
-1. Ejecutar toda la suite y confirmar que las 15 pruebas pasan.
-2. Establecer esta ejecución como línea base.
-3. Ejecutar una prueba individual de la calculadora.
-4. Ejecutar una prueba individual del carrito.
-5. Reconocer Arrange, Act y Assert en las pruebas.
-6. Revisar el cumplimiento de los principios FIRST.
-7. Introducir de manera controlada un defecto.
-8. Ejecutar nuevamente la suite y observar la regresión.
-9. Corregir el código.
-10. Ejecutar toda la suite para comprobar que las 15 pruebas vuelven a pasar.
-11. Agregar una prueba que evite la reaparición del defecto.
+1. Ejecutar todas las suites y establecer una línea base verde.
+2. Trabajar regresión funcional, Triple AAA y principios FIRST.
+3. Revisar contratos y aislamiento del estado en pruebas de API.
+4. Comparar corrección funcional con restricciones de rendimiento.
+5. Analizar validaciones de seguridad y sus límites.
+6. Introducir un defecto controlado en un módulo.
+7. Ejecutar primero la prueba relacionada y luego todas las suites.
+8. Restaurar el comportamiento correcto antes del commit final.
 
-Los defectos introducidos durante la práctica son temporales y no deben incluirse en el commit final.
+## Alcance académico
 
-La guía completa de actividades se encuentra en [`regression-testing/ejercicios/README.md`](regression-testing/ejercicios/README.md).
+Estos ejemplos son introductorios. Una restricción de tiempo ejecutada en una
+sola máquina no reemplaza pruebas de carga, estrés o capacidad con herramientas
+especializadas. Del mismo modo, el escape de texto para HTML no sustituye los
+controles de autenticación, autorización, gestión de secretos, consultas
+parametrizadas, encabezados de seguridad y demás mecanismos del framework.
 
-## Resultado esperado
-
-Todas las pruebas deben finalizar correctamente antes y después de cada cambio válido.
-
-
-## Nota académica
-
-Los ejemplos de rendimiento y seguridad son introductorios. Un límite de tiempo aislado no sustituye una herramienta de carga y la sanitización simple no reemplaza los mecanismos de seguridad propios del framework utilizado.
+Los defectos introducidos durante los ejercicios son temporales y no deben
+publicarse en el repositorio.
